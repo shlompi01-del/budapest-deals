@@ -41,4 +41,4 @@ jobs:
         git add baseline.json
         [ -f latest_deal.json ] && git add latest_deal.json
         git commit -m "Update deal check" || echo "No changes to commit"
-        git push  # פשוט git push – כבר משתמש ב-token של checkout
+        git push   # ✅ פשוט git push – אין URL, משתמש ב-token של checkout
