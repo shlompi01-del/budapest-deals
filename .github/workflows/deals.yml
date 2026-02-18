@@ -1,36 +1,42 @@
-name: Budapest Deals Bot
+name: Budapest Deals Checker
 
 on:
   schedule:
-    - cron: "0 8,20 * * *"   # פעמיים ביום (08:00 ו־20:00 UTC)
-  workflow_dispatch:
+    - cron: "0 8,20 * * *"   # ריצה פעמיים ביום UTC (תוכל לשנות לפי צורך)
+  workflow_dispatch:         # מאפשר הרצה ידנית
 
 jobs:
-  run:
+  check-deals:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
 
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
+    - name: Install requirements
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests
 
-      - name: Run checker
-        run: |
-          python checker.py
+    - name: Run checker
+      run: python checker.py
 
-      - name: Commit results if changed
-        run: |
-          git config user.name "deal-bot"
-          git config user.email "bot@github.com"
-          git add baseline.json || true
-          git add latest_deal.json 2>/dev/null || true
-
-          git commit -m "Update deal check" || echo "No changes"
-          git push
+    - name: Commit results if changed
+      run: |
+        git config user.name "deal-bot"
+        git config user.email "bot@github.com"
+        # הוספה של baseline תמיד
+        git add baseline.json || true
+        # latest_deal.json רק אם קיים
+        git add latest_deal.json 2>/dev/null || true
+        # commit אם יש שינויים
+        git commit -m "Update deal check" || echo "No changes"
+        # push עם PAT
+        git push https://$GH_PAT@github.com/shlompi01-del/budapest-deals.git HEAD:main
+      env:
+        GH_PAT: ${{ secrets.GH_PAT }}
