@@ -2,7 +2,7 @@ name: Budapest Deals Checker
 
 on:
   schedule:
-    - cron: "0 8,20 * * *"   # ריצה פעמיים ביום UTC
+    - cron: "0 8,20 * * *"   # פעמיים ביום UTC
   workflow_dispatch:         # מאפשר הרצה ידנית
 
 jobs:
@@ -10,13 +10,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # 1️⃣ בדיקה של ה-repo
+    # 1️⃣ Checkout repo עם token מובנה
     - name: Checkout repository
       uses: actions/checkout@v3
       with:
-        persist-credentials: true   # הכי חשוב – מאפשר push עם GITHUB_TOKEN
+        token: ${{ secrets.GITHUB_TOKEN }}
+        persist-credentials: true   # הכי חשוב – מאפשר push
 
-    # 2️⃣ התקנת פייתון
+    # 2️⃣ Setup Python
     - name: Setup Python
       uses: actions/setup-python@v4
       with:
@@ -32,16 +33,11 @@ jobs:
     - name: Run checker
       run: python checker.py
 
-    # 5️⃣ Commit & Push אוטומטי
-    - name: Commit and push changes
-      uses: stefanzweifel/git-auto-commit-action@v4
-      with:
-        commit_message: "Update deal check"
-        commit_user_name: "deal-bot"
-        commit_user_email: "bot@github.com"
-        branch: main
-        file_pattern: |
-          baseline.json
-          latest_deal.json
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    # 5️⃣ Commit & push ידני
+    - name: Commit & Push changes
+      run: |
+        git config user.name "deal-bot"
+        git config user.email "bot@github.com"
+        git add baseline.json latest_deal.json || true
+        git commit -m "Update deal check" || echo "No changes to commit"
+        git push origin main
