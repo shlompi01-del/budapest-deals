@@ -10,22 +10,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    # 1️⃣ בדיקה של ה-repo
     - name: Checkout repository
       uses: actions/checkout@v3
+      with:
+        persist-credentials: true   # הכי חשוב – מאפשר push עם GITHUB_TOKEN
 
+    # 2️⃣ התקנת פייתון
     - name: Setup Python
       uses: actions/setup-python@v4
       with:
         python-version: 3.11
 
+    # 3️⃣ התקנת ספריות דרושות
     - name: Install requirements
       run: |
         python -m pip install --upgrade pip
         pip install requests
 
+    # 4️⃣ הרצת הסקריפט שלך
     - name: Run checker
       run: python checker.py
 
+    # 5️⃣ Commit & Push אוטומטי
     - name: Commit and push changes
       uses: stefanzweifel/git-auto-commit-action@v4
       with:
