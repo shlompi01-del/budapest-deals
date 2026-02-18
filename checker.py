@@ -3,7 +3,7 @@ import json
 import os
 from datetime import date, timedelta
 
-TOKEN = "1d3855b6f26990b7ebaa94116f6b452e"
+TOKEN = "d2e7bc5be23119a2dc9f7d3bda4077cf"
 
 ORIGIN = "TLV"
 DEST = "BUD"
