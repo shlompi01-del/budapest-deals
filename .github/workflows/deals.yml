@@ -33,11 +33,12 @@ jobs:
     - name: Run checker
       run: python checker.py
 
-    # 5️⃣ Commit & push ידני
+    # 5️⃣ Commit & push ידני עם בדיקה אם latest_deal.json קיים
     - name: Commit & Push changes
       run: |
         git config user.name "deal-bot"
         git config user.email "bot@github.com"
-        git add baseline.json latest_deal.json || true
+        git add baseline.json
+        [ -f latest_deal.json ] && git add latest_deal.json
         git commit -m "Update deal check" || echo "No changes to commit"
         git push origin main
