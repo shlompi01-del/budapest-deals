@@ -15,7 +15,7 @@ jobs:
       uses: actions/checkout@v3
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        persist-credentials: true   # הכי חשוב – מאפשר push
+        persist-credentials: true   # מאפשר push בלי שגיאות
 
     # 2️⃣ Setup Python
     - name: Setup Python
@@ -33,7 +33,7 @@ jobs:
     - name: Run checker
       run: python checker.py
 
-    # 5️⃣ Commit & push ידני עם בדיקה אם latest_deal.json קיים
+    # 5️⃣ Commit & push עם בדיקה אם latest_deal.json קיים
     - name: Commit & Push changes
       run: |
         git config user.name "deal-bot"
@@ -41,4 +41,4 @@ jobs:
         git add baseline.json
         [ -f latest_deal.json ] && git add latest_deal.json
         git commit -m "Update deal check" || echo "No changes to commit"
-        git push origin main
+        git push  # פשוט git push – כבר משתמש ב-token של checkout
