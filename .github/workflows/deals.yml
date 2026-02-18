@@ -29,6 +29,8 @@ jobs:
         run: |
           git config user.name "deal-bot"
           git config user.email "bot@github.com"
-          git add baseline.json latest_deal.json || true
+          git add baseline.json || true
+          git add latest_deal.json 2>/dev/null || true
+
           git commit -m "Update deal check" || echo "No changes"
           git push
