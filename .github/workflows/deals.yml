@@ -2,7 +2,7 @@ name: Budapest Deals Checker
 
 on:
   schedule:
-    - cron: "0 8,20 * * *"   # ריצה פעמיים ביום UTC (תוכל לשנות לפי צורך)
+    - cron: "0 8,20 * * *"   # ריצה פעמיים ביום UTC
   workflow_dispatch:         # מאפשר הרצה ידנית
 
 jobs:
@@ -26,17 +26,15 @@ jobs:
     - name: Run checker
       run: python checker.py
 
-    - name: Commit results if changed
-      run: |
-        git config user.name "deal-bot"
-        git config user.email "bot@github.com"
-        # הוספה של baseline תמיד
-        git add baseline.json || true
-        # latest_deal.json רק אם קיים
-        git add latest_deal.json 2>/dev/null || true
-        # commit אם יש שינויים
-        git commit -m "Update deal check" || echo "No changes"
-        # push עם PAT
-        git push https://$GH_PAT@github.com/shlompi01-del/budapest-deals.git HEAD:main
+    - name: Commit and push changes
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: "Update deal check"
+        commit_user_name: "deal-bot"
+        commit_user_email: "bot@github.com"
+        branch: main
+        file_pattern: |
+          baseline.json
+          latest_deal.json
       env:
-        GH_PAT: ${{ secrets.GH_PAT }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
