@@ -1,0 +1,34 @@
+name: Budapest Deals Bot
+
+on:
+  schedule:
+    - cron: "0 8,20 * * *"   # פעמיים ביום (08:00 ו־20:00 UTC)
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run checker
+        run: |
+          python checker.py
+
+      - name: Commit results if changed
+        run: |
+          git config user.name "deal-bot"
+          git config user.email "bot@github.com"
+          git add baseline.json latest_deal.json || true
+          git commit -m "Update deal check" || echo "No changes"
+          git push
